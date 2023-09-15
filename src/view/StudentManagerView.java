@@ -1,11 +1,20 @@
 package view;
 
 import controller.StudentManagerController;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.swing.ButtonGroup;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import model.Province;
 import model.Student;
@@ -18,6 +27,7 @@ public class StudentManagerView extends javax.swing.JFrame {
     private javax.swing.JButton jButton_delete;
     private javax.swing.JButton jButton_edit;
     private javax.swing.JButton jButton_filter;
+    private javax.swing.JButton jButton_cancelFilter;
     private javax.swing.JButton jButton_insert;
     private javax.swing.JButton jButton_save;
     public javax.swing.JComboBox<String> jComboBox_birth;
@@ -62,11 +72,17 @@ public class StudentManagerView extends javax.swing.JFrame {
     public javax.swing.JTextField jTextField_score3;
     public javax.swing.JTextField jTextField_studentID;
     public javax.swing.JTextField jTextField_total;
-    private int currentRow=0;
+
+    private int currentRow = 0;
 
     public StudentManagerView() {
         this.model = new StudentManagerModel();
         initComponents();
+        this.setLocationRelativeTo(null);
+        this.setTitle("Student Management App");
+        URL url = getClass().getResource("icon.png");
+        Image img = Toolkit.getDefaultToolkit().createImage(url);
+        this.setIconImage(img);
         this.setVisible(true);
     }
 
@@ -77,6 +93,7 @@ public class StudentManagerView extends javax.swing.JFrame {
         jLabel_studentID = new javax.swing.JLabel();
         jTextField_studentID = new javax.swing.JTextField();
         jButton_filter = new javax.swing.JButton();
+        jButton_cancelFilter = new javax.swing.JButton();
         jComboBox_birthPlace = new javax.swing.JComboBox<>();
         jPanel_body = new javax.swing.JPanel();
         jLabel_listStudent = new javax.swing.JLabel();
@@ -128,12 +145,12 @@ public class StudentManagerView extends javax.swing.JFrame {
         jPanel_header.setBackground(new java.awt.Color(205, 252, 246));
         jPanel_header.setForeground(new java.awt.Color(0, 0, 0));
 
-        jLabel_birthPlace.setFont(new java.awt.Font("Segoe UI", 1, 16));
+        jLabel_birthPlace.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         jLabel_birthPlace.setForeground(new java.awt.Color(0, 0, 0));
         jLabel_birthPlace.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_birthPlace.setText("BirthPlace");
 
-        jLabel_studentID.setFont(new java.awt.Font("Segoe UI", 1, 16));
+        jLabel_studentID.setFont(new java.awt.Font("Segoe UI", 1, 16)); // NOI18N
         jLabel_studentID.setForeground(new java.awt.Color(0, 0, 0));
         jLabel_studentID.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel_studentID.setText("StudentID");
@@ -142,6 +159,7 @@ public class StudentManagerView extends javax.swing.JFrame {
         jTextField_studentID.setForeground(new java.awt.Color(51, 51, 51));
 
         jButton_filter.setBackground(new java.awt.Color(20, 30, 97));
+        jButton_filter.addActionListener(ac);
         jButton_filter.setForeground(new java.awt.Color(255, 255, 255));
         jButton_filter.setText("Filter");
 
@@ -153,41 +171,55 @@ public class StudentManagerView extends javax.swing.JFrame {
         jComboBox_birthPlace.setBackground(new java.awt.Color(255, 255, 255));
         jComboBox_birthPlace.setForeground(new java.awt.Color(0, 0, 0));
 
+        jButton_cancelFilter.setBackground(new java.awt.Color(20, 30, 97));
+        jButton_cancelFilter.setForeground(new java.awt.Color(255, 255, 255));
+        jButton_cancelFilter.addActionListener(ac);
+        jButton_cancelFilter.setText("Cancel Filter");
+
         javax.swing.GroupLayout jPanel_headerLayout = new javax.swing.GroupLayout(jPanel_header);
         jPanel_header.setLayout(jPanel_headerLayout);
         jPanel_headerLayout.setHorizontalGroup(
-                jPanel_headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(
-                        jPanel_headerLayout.createSequentialGroup().addGap(20, 20, 20)
+                jPanel_headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel_headerLayout.createSequentialGroup()
+                                .addGap(20, 20, 20)
                                 .addComponent(jLabel_birthPlace, javax.swing.GroupLayout.PREFERRED_SIZE, 79,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE).addGap(18, 18, 18)
-                                .addComponent(jComboBox_birthPlace, javax.swing.GroupLayout.PREFERRED_SIZE, 187,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE).addGap(39, 39, 39)
-                                .addComponent(jLabel_studentID, javax.swing.GroupLayout.PREFERRED_SIZE, 92,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE).addGap(27, 27, 27)
-                                .addComponent(jTextField_studentID, javax.swing.GroupLayout.PREFERRED_SIZE, 190,
                                         javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-                                        javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButton_filter, javax.swing.GroupLayout.PREFERRED_SIZE, 104,
-                                        javax.swing.GroupLayout.PREFERRED_SIZE).addGap(26, 26, 26)));
+                                .addGap(18, 18, 18)
+                                .addComponent(jComboBox_birthPlace, javax.swing.GroupLayout.PREFERRED_SIZE, 187,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel_studentID, javax.swing.GroupLayout.PREFERRED_SIZE, 92,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jTextField_studentID, javax.swing.GroupLayout.PREFERRED_SIZE, 181,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(34, 34, 34)
+                                .addComponent(jButton_filter, javax.swing.GroupLayout.PREFERRED_SIZE, 83,
+                                        javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton_cancelFilter)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
         jPanel_headerLayout.setVerticalGroup(
                 jPanel_headerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
-                                jPanel_headerLayout.createSequentialGroup().addContainerGap(28, Short.MAX_VALUE)
-                                        .addGroup(jPanel_headerLayout.createParallelGroup(
-                                                        javax.swing.GroupLayout.Alignment.BASELINE)
-                                                .addComponent(jLabel_birthPlace, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                        25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(jLabel_studentID, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                        25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(jTextField_studentID,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 35,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(jButton_filter, javax.swing.GroupLayout.PREFERRED_SIZE,
-                                                        31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addComponent(jComboBox_birthPlace,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE, 35,
-                                                        javax.swing.GroupLayout.PREFERRED_SIZE)).addGap(24, 24, 24)));
+                        .addGroup(jPanel_headerLayout.createSequentialGroup()
+                                .addContainerGap(28, Short.MAX_VALUE)
+                                .addGroup(jPanel_headerLayout.createParallelGroup(
+                                                javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel_birthPlace, javax.swing.GroupLayout.PREFERRED_SIZE, 25,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel_studentID, javax.swing.GroupLayout.PREFERRED_SIZE, 25,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jTextField_studentID, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jComboBox_birthPlace, javax.swing.GroupLayout.PREFERRED_SIZE, 35,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jButton_filter, javax.swing.GroupLayout.PREFERRED_SIZE, 31,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jButton_cancelFilter, javax.swing.GroupLayout.PREFERRED_SIZE, 31,
+                                                javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(24, 24, 24))
+        );
 
         jPanel_body.setBackground(new java.awt.Color(188, 206, 248));
 
@@ -202,6 +234,14 @@ public class StudentManagerView extends javax.swing.JFrame {
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
                 new Object[][]{},
                 new String[]{"No", "ID", "Name", "Place", "Date", "Sex", "Score1", "Score2", "Score3"}));
+        this.setSizeColumn();
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+
+        for (int i = 0; i < jTable1.getColumnCount(); i++) {
+            jTable1.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+        }
+        this.setSizeRow();
         jScrollPane1.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel_bodyLayout = new javax.swing.GroupLayout(jPanel_body);
@@ -739,81 +779,214 @@ public class StudentManagerView extends javax.swing.JFrame {
 
     }
 
-
     public void insertIntoTable(Student student) {
-        DefaultTableModel tableModel=(DefaultTableModel) jTable1.getModel();
-        if(!this.model.checkExists(student)){
-        this.model.insertStudent(student);
-        currentRow++;
-        tableModel.addRow(new Object[]{
-                currentRow+"",
-                student.getId()+"",
-                student.getName(),
-                student.getBirthPlace().getNameProvince(),
-                student.formatDate(),
-                (student.isGender() ? "Male":"Female"),
-                student.getScore1()+"",
-                student.getScore2()+"",
-                student.getScore3()+""
-        });
+        DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
+        if (!this.model.checkExists(student)) {
+            this.model.insertStudent(student);
+            this.addTable(student);
 
-        }else {
+        } else {
             this.model.updateStudent(student);
             int row = tableModel.getRowCount();
-            for (int i = 0; i <row ; i++) {
-                String id=tableModel.getValueAt(i,0)+"";
-                if(id.equals(student.getId()+"")){
-                    tableModel.setValueAt(student.getId()+"",i,1);
-                    tableModel.setValueAt(student.getName(),i,2);
-                    tableModel.setValueAt(student.getBirthPlace().getNameProvince(),i,3);
-                    tableModel.setValueAt(student.formatDate(),i,4);
-                    tableModel.setValueAt((student.isGender() ? "Male":"Female"),i,5);
-                    tableModel.setValueAt(student.getScore1()+"",i,6);
-                    tableModel.setValueAt(student.getScore2()+"",i,7);
-                    tableModel.setValueAt(student.getScore3()+"",i,8);
+            for (int i = 0; i < row; i++) {
+                String id = tableModel.getValueAt(i, 0) + "";
+                if (id.equals(student.getId() + "")) {
+                    tableModel.setValueAt(student.getId() + "", i, 1);
+                    tableModel.setValueAt(student.getName(), i, 2);
+                    tableModel.setValueAt(student.getBirthPlace().getNameProvince(), i, 3);
+                    tableModel.setValueAt(student.formatDate(), i, 4);
+                    tableModel.setValueAt((student.isGender() ? "Male" : "Female"), i, 5);
+                    tableModel.setValueAt(student.getScore1() + "", i, 6);
+                    tableModel.setValueAt(student.getScore2() + "", i, 7);
+                    tableModel.setValueAt(student.getScore3() + "", i, 8);
                 }
 
             }
         }
     }
 
-    public void updateIntoTable(Student student) {
-        this.model.updateStudent(student);
-    }
-    public String setTotal(Student student){
+    public void addTable(Student student) {
+        DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
+            currentRow++;
+            tableModel.addRow(new Object[]{
+                    currentRow + "",
+                    student.getId() + "",
+                    student.getName(),
+                    student.getBirthPlace().getNameProvince(),
+                    student.formatDate(),
+                    (student.isGender() ? "Male" : "Female"),
+                    student.getScore1() + "",
+                    student.getScore2() + "",
+                    student.getScore3() + ""
+            });
+        }
+
+    public String setTotal(Student student) {
         String s = student.total() + "";
         return s;
     }
 
     public void displayStudentSelected() {
-        DefaultTableModel tableModel=(DefaultTableModel) jTable1.getModel();
-        int row_selected = jTable1.getSelectedRow();
-
-        int id=Integer.valueOf(tableModel.getValueAt(row_selected,1).toString());
-        String name=tableModel.getValueAt(row_selected,2)+"";
-        Province province=Province.getProvinceByName(tableModel.getValueAt(row_selected,3)+"");
-        String dateText = tableModel.getValueAt(row_selected, 4).toString();
-        LocalDate dob = LocalDate.parse(dateText, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        String text_gender=tableModel.getValueAt(row_selected,5).toString();
-        boolean gender = text_gender.equals("Male");
-        Float score1=Float.valueOf(tableModel.getValueAt(row_selected,6)+"");
-        Float score2=Float.valueOf(tableModel.getValueAt(row_selected,7)+"");
-        Float score3=Float.valueOf(tableModel.getValueAt(row_selected,8)+"");
-
-        this.jTextField_id.setText(id+"");
-        this.jTextField_name.setText(name);
-        this.jComboBox_birth.setSelectedItem(province.getNameProvince());
-        if(gender){
+        Student st = getStudentIsSelected();
+        this.jTextField_id.setText(st.getId() + "");
+        this.jTextField_name.setText(st.getName());
+        this.jComboBox_birth.setSelectedItem(st.getBirthPlace().getNameProvince());
+        if (st.isGender()) {
             jRadioButton_male.setSelected(true);
-        }else {
+        } else {
             jRadioButton_female.setSelected(true);
         }
-        this.jTextField_date.setText(dateText+"");
-        this.jTextField_score1.setText(score1+"");
-        this.jTextField_score2.setText(score2+"");
-        this.jTextField_score3.setText(score3+"");
-        this.jTextField_total.setText(score1+score2+score3+"");
+        this.jTextField_date.setText(st.formatDate());
+        this.jTextField_score1.setText(st.getScore1() + "");
+        this.jTextField_score2.setText(st.getScore2() + "");
+        this.jTextField_score3.setText(st.getScore3() + "");
+    }
+
+    public void setSizeColumn() {
+        DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
+        int numColumns = tableModel.getColumnCount();
+        int[] columnWidths = {50, 50, 200, 200, 200, 80, 80, 80, 80}; // Đặt kích thước theo ý muốn
+        for (int i = 0; i < numColumns; i++) {
+            jTable1.getColumnModel().getColumn(i).setPreferredWidth(columnWidths[i]);
+        }
+    }
+
+    public void setSizeRow() {
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
+            @Override
+            public java.awt.Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                    boolean hasFocus, int row, int column) {
+                final java.awt.Component cellComponent = super.getTableCellRendererComponent(table, value, isSelected,
+                        hasFocus, row, column);
+
+                table.setRowHeight(row, 30);
+                return cellComponent;
+            }
+        };
+
+        jTable1.getColumnModel().getColumn(0).setCellRenderer(renderer);
+    }
+
+    public Student getStudentIsSelected() {
+        DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
+        int row_selected = jTable1.getSelectedRow();
+        if (row_selected == -1) {
+            // Nếu chưa chọn hàng, hiển thị thông báo lỗi
+            JOptionPane.showMessageDialog(this, "Please select a row.", "Error", JOptionPane.ERROR_MESSAGE);
+            return null;
+        }
+        int id = Integer.valueOf(tableModel.getValueAt(row_selected, 1).toString());
+        String name = tableModel.getValueAt(row_selected, 2) + "";
+        Province province = Province.getProvinceByName(tableModel.getValueAt(row_selected, 3) + "");
+        String dateText = tableModel.getValueAt(row_selected, 4).toString();
+        LocalDate dob = LocalDate.parse(dateText, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        String text_gender = tableModel.getValueAt(row_selected, 5).toString();
+        boolean gender = text_gender.equals("Male");
+        Float score1 = Float.valueOf(tableModel.getValueAt(row_selected, 6) + "");
+        Float score2 = Float.valueOf(tableModel.getValueAt(row_selected, 7) + "");
+        Float score3 = Float.valueOf(tableModel.getValueAt(row_selected, 8) + "");
+        Student st = new Student(id, name, province, dob, gender, score1, score2, score3);
+        return st;
 
     }
+
+    public void deleteStudent() {
+        DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
+        int row_selected = jTable1.getSelectedRow();
+        int choose = JOptionPane.showConfirmDialog(this, "Are you sure to delete row selected");
+        if (choose == JOptionPane.YES_OPTION) {
+            Student st = getStudentIsSelected();
+            this.model.deleteStudent(st);
+            tableModel.removeRow(row_selected);
+            currentRow--;
+        }
+    }
+
+    public void getDataFromInput() {
+        int id = Integer.valueOf(this.jTextField_id.getText());
+        String name = this.jTextField_name.getText();
+        int birthPlace = this.jComboBox_birth.getSelectedIndex();
+        Province province = Province.getProvinceById(birthPlace - 1);//do có phần rỗng ko hiện
+        String dateText = this.jTextField_date.getText();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate dob = LocalDate.parse(dateText, formatter);
+        boolean gender = true;
+        if (this.jRadioButton_male.isSelected()) {
+            gender = true;
+        } else if (this.jRadioButton_female.isSelected()) {
+            gender = false;
+        }
+        Float score1 = Float.valueOf(this.jTextField_score1.getText());
+        Float score2 = Float.valueOf(this.jTextField_score2.getText());
+        Float score3 = Float.valueOf(this.jTextField_score3.getText());
+
+        Student student = new Student(id, name, province, dob, gender, score1, score2, score3);
+        this.insertIntoTable(student);
+        this.jTextField_total.setText(this.setTotal(student));
+    }
+
+    public void filterStudent() {
+        //goi hàm hủy tìm kiém
+        this.cancelFilter();
+        //tìm kiếm
+        int birthPlace = this.jComboBox_birthPlace.getSelectedIndex() - 1;
+        String mssv = this.jTextField_studentID.getText();
+        DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
+        int row = tableModel.getRowCount();
+        Set<Integer>idNeedDelete=new TreeSet<Integer>();
+        if (birthPlace >= 0) {
+        Province p = Province.getProvinceById(birthPlace);
+            for (int i = 0; i < row; i++) {
+                String namePlace = tableModel.getValueAt(i, 3) + "";
+                String id=tableModel.getValueAt(i,1)+"";
+                if (!namePlace.equals(p.getNameProvince())) {
+                    idNeedDelete.add(Integer.valueOf(id));
+
+                }
+
+            }
+        }
+        if(mssv.length() > 0){
+            for (int i = 0; i < row; i++) {
+                String id=tableModel.getValueAt(i,1)+"";
+                if (!id.contains(mssv)) {
+                    idNeedDelete.add(Integer.valueOf(id));
+                }
+            }
+
+        }
+        for (Integer id: idNeedDelete) {
+            row=tableModel.getRowCount();
+            for (int i = 0; i < row; i++) {
+                String idInTable=tableModel.getValueAt(i,1)+"";
+                if (idInTable.equals(id.toString())) {
+                    try {
+                        tableModel.removeRow(i);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    break;
+                }
+            }
+
+        }
+    }
+    public void cancelFilter() {
+        while(true){
+            DefaultTableModel tableModel=(DefaultTableModel) jTable1.getModel();
+            int rowCount=tableModel.getRowCount();
+            if(rowCount==0){
+                currentRow=0;
+                break;
+            }else {
+                tableModel.removeRow(0);
+                currentRow--;
+            }
+        }
+        for (Student st :this.model.getListStudent()) {
+            this.addTable(st);
+        }
+    }
+
 }
 
