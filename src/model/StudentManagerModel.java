@@ -3,12 +3,14 @@ package model;
 import java.util.ArrayList;
 
 public class StudentManagerModel {
-    private ArrayList<Student>listStudent;
+    public ArrayList<Student>listStudent;
     private String choose;
+    private String nameFile;
 
     public StudentManagerModel() {
         this.listStudent = new ArrayList<Student>();
         this.choose="";
+        this.nameFile="";
     }
 
     public StudentManagerModel(ArrayList<Student> listStudent) {
@@ -39,6 +41,14 @@ public class StudentManagerModel {
 
     public void setChoose(String choose) {
         this.choose = choose;
+    }
+
+    public String getNameFile() {
+        return nameFile;
+    }
+
+    public void setNameFile(String nameFile) {
+        this.nameFile = nameFile;
     }
 
     public boolean checkExists(Student student) {

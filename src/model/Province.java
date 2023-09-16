@@ -1,8 +1,9 @@
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Province {
+public class Province implements Serializable {
 
     private int idProvince;
     private String nameProvince;

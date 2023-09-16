@@ -19,11 +19,10 @@ public class StudentManagerController implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         String command=e.getActionCommand();
-        JOptionPane.showMessageDialog(this.view,"You just pressed the button: "+command);
         if(command.equals("Insert")){
             this.view.deleteInfo();
             this.view.model.setChoose("Insert");
-        }else if(command.equals("Save")){
+        }else if(command.equals("Save data")){
             try {
                 this.view.getDataFromInput();
             } catch (NumberFormatException ex) {
@@ -40,8 +39,16 @@ public class StudentManagerController implements ActionListener {
             this.view.deleteInfo();
         }else if(command.equals("Filter")){
             this.view.filterStudent();
-        }else {
+        }else if (command.equals("Cancel Filter")){
             this.view.cancelFilter();
+        }else if(command.equals("About me")){
+            this.view.displayAbout();
+        }else if(command.equals("Exit")){
+            this.view.exitProgram();
+        }else if(command.equals("Save file")){
+            this.view.saveFile();
+        }else if(command.equals("Open")){
+            this.view.openFile();
         }
     }
 }

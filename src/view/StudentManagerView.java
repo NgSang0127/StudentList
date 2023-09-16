@@ -4,6 +4,14 @@ import controller.StudentManagerController;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -11,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.swing.ButtonGroup;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -48,10 +57,10 @@ public class StudentManagerView extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem_open;
+    private javax.swing.JMenuItem jMenuItem_save;
+    private javax.swing.JMenuItem jMenuItem_exit;
+    private javax.swing.JMenuItem jMenuItem_about;
     private javax.swing.JPanel jPanel_body;
     private javax.swing.JPanel jPanel_content;
     private javax.swing.JPanel jPanel_foot;
@@ -128,13 +137,13 @@ public class StudentManagerView extends javax.swing.JFrame {
         jSeparator3 = new javax.swing.JSeparator();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem_open = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem_save = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem3 = new javax.swing.JMenuItem();
+        jMenuItem_exit = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
-        jMenuItem4 = new javax.swing.JMenuItem();
+        jMenuItem_about = new javax.swing.JMenuItem();
 
         ActionListener ac = new StudentManagerController(this);
 
@@ -251,7 +260,7 @@ public class StudentManagerView extends javax.swing.JFrame {
                         jPanel_bodyLayout.createSequentialGroup().addGap(20, 20, 20).addGroup(
                                         jPanel_bodyLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                 .addComponent(jLabel_listStudent)
-                                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 788,
+                                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 820,
                                                         javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
         jPanel_bodyLayout.setVerticalGroup(
@@ -396,6 +405,7 @@ public class StudentManagerView extends javax.swing.JFrame {
 
         jButton_save.setBackground(new java.awt.Color(20, 30, 97));
         jButton_save.addActionListener(ac);
+        jButton_save.setActionCommand("Save data");
         jButton_save.setFont(new java.awt.Font("Segoe UI", 0, 14));
         jButton_save.setForeground(new java.awt.Color(255, 255, 255));
         jButton_save.setText("Save");
@@ -721,43 +731,48 @@ public class StudentManagerView extends javax.swing.JFrame {
         jMenu1.setText("File");
         jMenu1.setFont(new java.awt.Font("Segoe UI", 0, 15));
 
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O,
+        jMenuItem_open.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O,
                 java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        jMenuItem1.setBackground(new java.awt.Color(250, 247, 240));
-        jMenuItem1.setFont(new java.awt.Font("Segoe UI", 0, 14));
-        jMenuItem1.setIcon(new javax.swing.ImageIcon(getClass().getResource("open.png")));
-        jMenuItem1.setText("Open");
+        jMenuItem_open.addActionListener(ac);
+        jMenuItem_open.setBackground(new java.awt.Color(250, 247, 240));
+        jMenuItem_open.setFont(new java.awt.Font("Segoe UI", 0, 14));
+        jMenuItem_open.setIcon(new javax.swing.ImageIcon(getClass().getResource("open.png")));
+        jMenuItem_open.setText("Open");
 
-        jMenu1.add(jMenuItem1);
+        jMenu1.add(jMenuItem_open);
 
         jSeparator1.setBackground(new java.awt.Color(250, 247, 240));
         jMenu1.add(jSeparator1);
 
-        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R,
+        jMenuItem_save.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R,
                 java.awt.event.InputEvent.CTRL_DOWN_MASK));
-        jMenuItem2.setBackground(new java.awt.Color(250, 247, 240));
-        jMenuItem2.setFont(new java.awt.Font("Segoe UI", 0, 14));
-        jMenuItem2.setIcon(new javax.swing.ImageIcon(getClass().getResource("close.png")));
-        jMenuItem2.setText("Close");
-        jMenu1.add(jMenuItem2);
+        jMenuItem_save.addActionListener(ac);
+        jMenuItem_save.setActionCommand("Save file");
+        jMenuItem_save.setBackground(new java.awt.Color(250, 247, 240));
+        jMenuItem_save.setFont(new java.awt.Font("Segoe UI", 0, 14));
+        jMenuItem_save.setIcon(new javax.swing.ImageIcon(getClass().getResource("close.png")));
+        jMenuItem_save.setText("Save");
+        jMenu1.add(jMenuItem_save);
         jMenu1.add(jSeparator2);
 
-        jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4,
+        jMenuItem_exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4,
                 java.awt.event.InputEvent.ALT_DOWN_MASK));
-        jMenuItem3.setBackground(new java.awt.Color(250, 247, 240));
-        jMenuItem3.setFont(new java.awt.Font("Segoe UI", 0, 14));
-        jMenuItem3.setIcon(new javax.swing.ImageIcon(getClass().getResource("exit.png")));
-        jMenuItem3.setText("Exit");
-        jMenu1.add(jMenuItem3);
+        jMenuItem_exit.addActionListener(ac);
+        jMenuItem_exit.setBackground(new java.awt.Color(250, 247, 240));
+        jMenuItem_exit.setFont(new java.awt.Font("Segoe UI", 0, 14));
+        jMenuItem_exit.setIcon(new javax.swing.ImageIcon(getClass().getResource("exit.png")));
+        jMenuItem_exit.setText("Exit");
+        jMenu1.add(jMenuItem_exit);
 
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("About");
         jMenu2.setFont(new java.awt.Font("Segoe UI", 0, 14));
 
-        jMenuItem4.setFont(new java.awt.Font("Segoe UI", 0, 14));
-        jMenuItem4.setText("About me");
-        jMenu2.add(jMenuItem4);
+        jMenuItem_about.setFont(new java.awt.Font("Segoe UI", 0, 14));
+        jMenuItem_about.addActionListener(ac);
+        jMenuItem_about.setText("About me");
+        jMenu2.add(jMenuItem_about);
 
         jMenuBar1.add(jMenu2);
 
@@ -784,23 +799,30 @@ public class StudentManagerView extends javax.swing.JFrame {
         if (!this.model.checkExists(student)) {
             this.model.insertStudent(student);
             this.addTable(student);
-
         } else {
-            this.model.updateStudent(student);
-            int row = tableModel.getRowCount();
-            for (int i = 0; i < row; i++) {
-                String id = tableModel.getValueAt(i, 0) + "";
-                if (id.equals(student.getId() + "")) {
-                    tableModel.setValueAt(student.getId() + "", i, 1);
-                    tableModel.setValueAt(student.getName(), i, 2);
-                    tableModel.setValueAt(student.getBirthPlace().getNameProvince(), i, 3);
-                    tableModel.setValueAt(student.formatDate(), i, 4);
-                    tableModel.setValueAt((student.isGender() ? "Male" : "Female"), i, 5);
-                    tableModel.setValueAt(student.getScore1() + "", i, 6);
-                    tableModel.setValueAt(student.getScore2() + "", i, 7);
-                    tableModel.setValueAt(student.getScore3() + "", i, 8);
+            Student oldStudent = getStudentIsSelected();
+            if (oldStudent != null) {
+                // Tìm và cập nhật student trong list
+                int idOld = -1;
+                for (int i = 0; i < this.model.listStudent.size(); i++) {
+                    if (this.model.listStudent.get(i).getId() == oldStudent.getId()) {
+                        idOld = i;
+                        this.model.listStudent.set(i, student); // Cập nhật student trong list
+                        break;
+                    }
                 }
 
+                if (idOld >= 0) {
+                    // Cập nhật dữ liệu trong bảng
+                    tableModel.setValueAt(student.getId(), idOld, 1);
+                    tableModel.setValueAt(student.getName(), idOld, 2);
+                    tableModel.setValueAt(student.getBirthPlace().getNameProvince(), idOld, 3);
+                    tableModel.setValueAt(student.formatDate(), idOld, 4);
+                    tableModel.setValueAt((student.isGender() ? "Male" : "Female"), idOld, 5);
+                    tableModel.setValueAt(student.getScore1(), idOld, 6);
+                    tableModel.setValueAt(student.getScore2(), idOld, 7);
+                    tableModel.setValueAt(student.getScore3(), idOld, 8);
+                }
             }
         }
     }
@@ -845,7 +867,7 @@ public class StudentManagerView extends javax.swing.JFrame {
     public void setSizeColumn() {
         DefaultTableModel tableModel = (DefaultTableModel) jTable1.getModel();
         int numColumns = tableModel.getColumnCount();
-        int[] columnWidths = {50, 50, 200, 200, 200, 80, 80, 80, 80}; // Đặt kích thước theo ý muốn
+        int[] columnWidths = {50, 100, 200, 200, 200, 100, 90, 90, 90}; // Đặt kích thước theo ý muốn
         for (int i = 0; i < numColumns; i++) {
             jTable1.getColumnModel().getColumn(i).setPreferredWidth(columnWidths[i]);
         }
@@ -988,5 +1010,76 @@ public class StudentManagerView extends javax.swing.JFrame {
         }
     }
 
+    public void displayAbout() {
+        JOptionPane.showMessageDialog(this, "Student Management App about Nguyen Cong Sang", "Copyrights",
+                JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    public void exitProgram() {
+        int choose=JOptionPane.showConfirmDialog(this,"Are you sure to exit program ?","Exit",
+                JOptionPane.YES_NO_OPTION);
+        if(choose==JOptionPane.YES_OPTION){
+            System.exit(0);
+        }
+    }
+    public void save(String path) {
+        try {
+            this.model.setNameFile(path);
+            FileOutputStream fos=new FileOutputStream(path);
+            ObjectOutputStream oos=new ObjectOutputStream(fos);
+            for(Student st:this.model.getListStudent()){
+                oos.writeObject(st);
+            }
+            oos.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void saveFile()  {
+            if(this.model.getNameFile().length()>0){
+                save(this.model.getNameFile());
+            }else {
+                JFileChooser fc=new JFileChooser();
+                int returnVal=fc.showSaveDialog(this);
+                if(returnVal==JFileChooser.APPROVE_OPTION){
+                    File file=fc.getSelectedFile();
+                    save(file.getAbsolutePath());
+                }
+            }
+    }
+    public void openF(File file) {
+        ArrayList<Student> list = new ArrayList<Student>();
+
+        try (FileInputStream fis = new FileInputStream(file);
+                ObjectInputStream ois = new ObjectInputStream(fis)) {
+
+            Object obj;
+            while ((obj = ois.readObject()) != null) {
+                if (obj instanceof Student) {
+                    Student student = (Student) obj;
+                    list.add(student);
+                }
+            }
+        } catch (EOFException e) {
+            // Đọc hết tệp, không cần xử lý gì.
+        } catch (Exception e) {
+            throw new RuntimeException("Error while reading file: " + e.getMessage());
+        }
+
+        this.model.setListStudent(list);
+    }
+
+
+
+    public void openFile() {
+            JFileChooser fc = new JFileChooser();
+            int returnVal = fc.showOpenDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                File file = fc.getSelectedFile();
+                    openF(file);
+                this.cancelFilter();
+            }
+    }
 }
 
